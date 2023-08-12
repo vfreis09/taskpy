@@ -1,0 +1,1 @@
+Task Management System: a backend API for a task management application that allows users to create, assign, and track tasks. Users should be able to set deadlines, prioritize tasks, and receive notifications.
