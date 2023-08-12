@@ -8,16 +8,16 @@ from .models import Task
 from .serializers import TaskSerializer
 from .serializers import UserSerializer
 
-# class Home(generics.RetrieveAPIView):
-#     #I want to get a list of tasks based on user id
-#     authentication_classes = [authentication.SessionAuthentication]
-#     permission_classes = [permissions.IsAuthenticated]
-    
-#     def get(self,request, pk):
-#         queryset = Task.objects.get(pk=pk)
-#         serializer_class = TaskSerializer
-    
-    
+
+class Home(generics.ListAPIView):
+    # I want to get a list of tasks based on user id
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = TaskSerializer
+
+    def get_queryset(self):
+        return Task.objects.filter(user_id=self.kwargs['pk'])
+
 
 class CreateTask(generics.CreateAPIView):
     authentication_classes = [authentication.SessionAuthentication]
@@ -25,7 +25,7 @@ class CreateTask(generics.CreateAPIView):
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
- 
+
 
 # class TaskById(generics.RetrieveUpdateDestroyAPIView):
 #     authentication_classes = [authentication.SessionAuthentication]

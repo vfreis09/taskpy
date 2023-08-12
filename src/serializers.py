@@ -11,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'tasks']
 
+
 class AuthSerializer(serializers.ModelSerializer):
 
     class Meta:
