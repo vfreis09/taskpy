@@ -1,10 +1,9 @@
 from rest_framework import generics, permissions, authentication, status
 from rest_framework.response import Response
-
-from django.contrib.auth import login
-
-from django.contrib.auth.models import User
 from rest_framework.views import APIView
+
+from django.contrib.auth import login, logout
+from django.contrib.auth.models import User
 
 from .models import Task
 from .serializers import TaskSerializer
@@ -36,10 +35,6 @@ class TaskById(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-
-# Bellow this nothing is working
-
-# class UserSignup(generics.CreateAPIView):
 
 
 class UserSignup(APIView):
@@ -77,5 +72,10 @@ class UserLogin(APIView):
         return self._error_response('invalid')
 
 
-# class UserLogout():
-#     id = 1
+class UserLogout(APIView):
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
