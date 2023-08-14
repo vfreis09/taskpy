@@ -7,6 +7,7 @@ urlpatterns = [
     path('task/<int:pk>/', views.TaskById.as_view()),
 
     # User auth
-    # path('login/', views.UserLogin.as_view()),
-    # path('signup/', views.UserSignup.as_view()),
+    path('signup/', views.UserSignup.as_view()),
+    path('login/', views.UserLogin.as_view()),
+    # path('logout/', views.UserLogout.as_view()),
 ]

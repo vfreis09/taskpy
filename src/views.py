@@ -1,11 +1,15 @@
-from rest_framework import generics, permissions, authentication
+from rest_framework import generics, permissions, authentication, status
+from rest_framework.response import Response
+
+from django.contrib.auth import login
 
 from django.contrib.auth.models import User
-from django.contrib.auth.views import LoginView
+from rest_framework.views import APIView
 
 from .models import Task
 from .serializers import TaskSerializer
-from .serializers import UserSerializer
+from .serializers import LoginSerializer
+from .serializers import SignupSerializer
 
 
 class Home(generics.ListAPIView):
@@ -35,15 +39,42 @@ class TaskById(generics.RetrieveUpdateDestroyAPIView):
 
 # Bellow this nothing is working
 
-# class UserLogin(generics.CreateAPIView):
-#     permission_classes = [permissions.AllowAny]
-
-
 # class UserSignup(generics.CreateAPIView):
-#     permission_classes = [permissions.AllowAny]
 
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
+
+class UserSignup(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    serializer_class = SignupSerializer
+
+    def post(self, request, format=None):
+        serializer = SignupSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(
+                {"msg": "Registration Successful"}, status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserLogin(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    serializer_class = LoginSerializer
+    queryset = User.objects.all()
+
+    def post(self, request):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authentication.authenticate(
+            username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+
+                return Response(status=status.HTTP_200_OK)
+            return self._error_response('disabled')
+        return self._error_response('invalid')
 
 
 # class UserLogout():
